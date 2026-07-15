@@ -1,0 +1,9 @@
+note.md
+paper.md
+Output/*
+results/*
+datasets/*
+Training_logs/*
+weight/*
+read.ipynb
+*.pyc

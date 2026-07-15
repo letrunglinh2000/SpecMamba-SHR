@@ -1,0 +1,82 @@
+{
+  "task": "Unified_R2MoE_RD_v4"
+  , "model": "plain"
+  , "gpu_ids": [0, 2, 3, 4, 5]
+  , "dist": true
+  , "n_channels": 3
+  , "scale": 1
+
+  , "netG": {
+    "net_type": "unified"
+  }
+
+  , "path": {
+    "root": "Training_logs"
+    // Trains from scratch. To WARM-START from the v3 backbone (much faster: only the
+    // widened removal head is new), set this to your real v3 best_ema.pth path.
+    // strict=False loads the backbone and skips the changed dual.* head (zero-init = identity).
+    // NOTE: no v3 checkpoint was found on this filesystem at build time -- fill in the path.
+    , "pretrained": null
+  }
+
+  , "datasets": {
+    "train": {
+      "name": "train_dataset"
+      , "dataset_type": "spec"
+      , "dataroot_H": "/data2/letrunglinh/despecular/diff-train-style/SHR-specmamba-anyir/datasets/RD/train/diffuse/"
+      , "dataroot_L": "/data2/letrunglinh/despecular/diff-train-style/SHR-specmamba-anyir/datasets/RD/train/specular/"
+      , "dataroot_M": "/data2/letrunglinh/despecular/diff-train-style/SHR-specmamba-anyir/datasets/RD/train/mask/"
+      , "H_size": 256
+      , "dataloader_shuffle": true
+      , "dataloader_num_workers": 4
+      , "dataloader_batch_size": 16
+    }
+    , "test": {
+      "name": "test_dataset"
+      , "dataset_type": "spec"
+      , "dataroot_H": "/data2/letrunglinh/despecular/diff-train-style/SHR-specmamba-anyir/datasets/RD/test/diffuse/"
+      , "dataroot_L": "/data2/letrunglinh/despecular/diff-train-style/SHR-specmamba-anyir/datasets/RD/test/specular/"
+      , "dataroot_M": null
+      , "H_size": 256
+    }
+  }
+
+  , "model_args": {
+    "base_dim": 32
+    , "depths": [2, 2, 4, 4]
+    , "stem_stride": 2
+    , "moe_experts": 4
+    , "deep_removal": true
+    , "removal_blocks": 6
+    , "removal_dim": 128
+    , "shared_scan": true
+    , "use_mamba_stage3": true
+    , "use_mamba_decoder": true
+    , "prompt_dim": 128
+    , "lite_expansion": 1.0
+  }
+
+  , "train": {
+    "lr": 3e-4
+    , "scheduler": "cosine"
+    , "warmup_iters": 1000
+    , "eta_min": 1e-7
+    , "total_iters": 200000
+    , "ema_decay": 0.995
+    , "lam_mask": 1.0
+    , "lam_removal": 3.0
+    , "lam_bal": 0.01
+    , "lam_reg": 0.0
+    , "lam_prompt": 0.0
+    , "rem_w_fft": 0.1
+    , "rem_w_ssim": 0.1
+    , "use_amp": true
+    , "amp_dtype": "bf16"
+    , "checkpoint_save": 5000
+    , "checkpoint_test": 5000
+    , "checkpoint_print": 100
+    , "eval_max": 100000
+    , "save_images": true
+    , "manual_seed": 42
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD2VAU/**)",
+      "Read(//data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD2VAU/train/**)",
+      "Read(//data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD2VAU/test/**)",
+      "Read(//data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD1VAU/**)",
+      "Read(//data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD1VAU/train/**)",
+      "Read(//data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD1VAU/test/**)",
+      "Bash(/home/oem/anaconda3/envs/linh/bin/python *)",
+      "Bash(CUDA_VISIBLE_DEVICES=0 timeout 180 /home/oem/anaconda3/envs/linh/bin/python models/specmamba.py)"
+    ]
+  }
+}

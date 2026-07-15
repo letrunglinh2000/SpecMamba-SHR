@@ -1,0 +1,15 @@
+opencv-python
+scikit-image
+pillow
+torchvision
+hdf5storage
+ninja
+lmdb
+requests
+timm
+einops
+# Mamba selective-scan CUDA kernels (required by models/specmamba.py).
+# Install with: pip install mamba-ssm --no-build-isolation
+# Needs a CUDA-enabled PyTorch and matching nvcc toolchain.
+mamba-ssm
+causal-conv1d

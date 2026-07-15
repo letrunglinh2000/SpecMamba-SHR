@@ -1,0 +1,109 @@
+{
+  "task": "AnyIR_SpecMamba_Diffusion_SD2"
+  , "model": "plain"
+  , "gpu_ids": [2, 3, 4, 5]
+  , "dist": true
+
+  , "n_channels": 3
+
+  , "path": {
+    "root": "Training_logs"
+    // , "pretrained_netG": "/data2/letrunglinh/despecular/diff-train-style/SHR-specmamba-anyir/weight/SHIQ_200000_G.pth"
+    , "pretrained_netSpecMamba": "/data2/letrunglinh/despecular/diff-train-style/SHR-specmamba-anyir/weight/SpecMamba/SD2_SpecMamba.pth"
+    , "pretrained_netG": null
+    // , "pretrained_netSpecMamba": null
+  }
+
+  , "datasets": {
+    "train": {
+      "name": "train_dataset"
+      , "dataset_type": "spec"
+      , "dataroot_H": "/data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD2VAU/train/Out/"
+      , "dataroot_L": "/data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD2VAU/train/Inp/"
+      , "dataroot_M": "/data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD2VAU/train/Mask/"
+      , "H_size": 256
+      , "dataloader_shuffle": true
+      , "dataloader_num_workers": 4
+      , "dataloader_batch_size": 4
+    }
+    , "test": {
+      "name": "test_dataset"
+      , "dataset_type": "spec"
+      , "dataroot_H": "/data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD2VAU/test/Out/"
+      , "dataroot_L": "/data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD2VAU/test/Inp/"
+      , "dataroot_M": null
+      , "H_size": 256
+    }
+  }
+
+  , "netG": {
+    "net_type": "Qformer"
+    , "init_type": "default"
+  }
+
+  , "train": {
+    "backbone": "anyir"
+    , "anyir": {
+      "dim": 48
+      , "num_blocks": [3, 5, 5, 7]
+      , "heads": [1, 2, 4, 8]
+      , "ffn_expansion_factor": 2
+      , "num_refinement_blocks": 4
+    }
+
+    , "G_lossfn_type": "l1"
+    , "G_lossfn_weight": 1.0
+    , "G_charbonnier_eps": 1e-9
+
+    , "E_decay": 0.999
+
+    , "G_optimizer_type": "adam"
+    , "G_optimizer_lr": 2e-4
+    , "G_optimizer_wd": 0
+    , "G_optimizer_clipgrad": null
+    , "G_optimizer_reuse": true
+    , "new_module_lr_mult": 1.0
+
+    , "G_scheduler_type": "MultiStepLR"
+    , "G_scheduler_milestones": [6000, 10000, 18000, 35000, 70000]
+    , "G_scheduler_gamma": 0.5
+
+    , "G_regularizer_orthstep": null
+    , "G_regularizer_clipstep": null
+
+    , "G_param_strict": true
+    , "E_param_strict": true
+
+    , "use_amp": true
+    , "amp_dtype": "bf16"
+
+    , "diffusion": {
+      "T": 8
+      , "t_dim": 128
+      , "t_warmup": 5000
+      , "t_min_floor": 5
+      , "lam_recon": 1.0
+      , "lam_score": 0.5
+      , "lam_mask": 0.2
+      , "lam_cycle": 0.0
+      , "lam_sparse": 0.0
+      , "mask_alpha_thresh": 0.3
+      , "infer_steps": 1
+      , "specmamba_input_size": 256
+      , "use_mask_film": true
+      , "predict_residual": false
+      , "drop_score_loss": false
+      , "specmamba_freeze_warmup": 0
+      , "specmamba_unfreeze_lr_mult": 1.0
+    }
+
+    , "eval": {
+      "max_images": 100
+      , "save_images": true
+    }
+
+    , "checkpoint_test": 2500
+    , "checkpoint_save": 2500
+    , "checkpoint_print": 200
+  }
+}

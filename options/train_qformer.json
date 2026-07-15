@@ -1,0 +1,92 @@
+{
+  "task": "Qformer_SpecMamba_Diffusion"
+  , "model": "plain"
+  , "gpu_ids": [0, 1, 2, 3]
+  , "dist": true
+
+  , "n_channels": 3
+
+  , "path": {
+    "root": "Training_logs"
+    , "pretrained_netG": "./weight/pretrained_SHIQ/Qformer/SHIQ.pth"
+    , "pretrained_netSpecMamba": "/data2/letrunglinh/SHDR-E2E-SHDNet/weight/pretrained_SHIQ/SpecMamba/SHIQ_SpecMamba.pth"
+  }
+
+  , "datasets": {
+    "train": {
+      "name": "train_dataset"
+      , "dataset_type": "spec"
+      , "dataroot_H": "trainsets/SHIQ/Train/Out/"
+      , "dataroot_L": "trainsets/SHIQ/Train/Inp/"
+      , "dataroot_M": "trainsets/SHIQ/Train/Mask/"
+      , "H_size": 200
+      , "dataloader_shuffle": true
+      , "dataloader_num_workers": 8
+      , "dataloader_batch_size": 1
+    }
+    , "test": {
+      "name": "test_dataset"
+      , "dataset_type": "spec"
+      , "dataroot_H": "trainsets/SHIQ/Test/Out/"
+      , "dataroot_L": "trainsets/SHIQ/Test/Inp/"
+      , "dataroot_M": "trainsets/SHIQ/Test/Mask/"
+    }
+  }
+
+  , "netG": {
+    "net_type": "Qformer"
+    , "init_type": "default"
+  }
+
+  , "train": {
+    "G_lossfn_type": "l1"
+    , "G_lossfn_weight": 1.0
+    , "G_charbonnier_eps": 1e-9
+
+    , "E_decay": 0.999
+
+    , "G_optimizer_type": "adam"
+    , "G_optimizer_lr": 2e-5
+    , "G_optimizer_wd": 0
+    , "G_optimizer_clipgrad": null
+    , "G_optimizer_reuse": true
+    , "new_module_lr_mult": 10.0
+
+    , "G_scheduler_type": "MultiStepLR"
+    , "G_scheduler_milestones": [200000, 400000, 600000, 700000, 750000]
+    , "G_scheduler_gamma": 0.5
+
+    , "G_regularizer_orthstep": null
+    , "G_regularizer_clipstep": null
+
+    , "G_param_strict": true
+    , "E_param_strict": true
+
+    , "use_amp": true
+    , "amp_dtype": "fp16"
+
+    , "diffusion": {
+      "T": 8
+      , "t_dim": 128
+      , "t_warmup": 5000
+      , "lam_recon": 1.0
+      , "lam_score": 0.5
+      , "lam_mask": 1.0
+      , "lam_cycle": 0.5
+      , "lam_sparse": 0.01
+      , "mask_alpha_thresh": 0.3
+      , "infer_steps": 8
+      , "specmamba_freeze_warmup": 10000
+      , "specmamba_unfreeze_lr_mult": 0.2
+    }
+
+    , "eval": {
+      "max_images": 64
+      , "save_images": false
+    }
+
+    , "checkpoint_test": 5000
+    , "checkpoint_save": 5000
+    , "checkpoint_print": 200
+  }
+}

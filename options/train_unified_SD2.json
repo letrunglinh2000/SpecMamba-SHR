@@ -1,0 +1,73 @@
+{
+  "task": "Unified_R2MoE_SD2"
+  , "model": "plain"
+  , "gpu_ids": [2, 3, 4, 5]
+  , "dist": true
+  , "n_channels": 3
+  , "scale": 1
+
+  , "netG": {
+    "net_type": "unified"
+  }
+
+  , "path": {
+    "root": "Training_logs"
+    // , "pretrained": "/data2/letrunglinh/despecular/diff-train-style/SHR-specmamba-anyir/weight/SpecMamba/SD2_SpecMamba.pth"
+    , "pretrained": null
+  }
+
+  , "datasets": {
+    "train": {
+      "name": "train_dataset"
+      , "dataset_type": "spec"
+      , "dataroot_H": "/data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD2VAU/train/Out/"
+      , "dataroot_L": "/data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD2VAU/train/Inp/"
+      , "dataroot_M": "/data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD2VAU/train/Mask/"
+      , "H_size": 256
+      , "dataloader_shuffle": true
+      , "dataloader_num_workers": 4
+      , "dataloader_batch_size": 32
+    }
+    , "test": {
+      "name": "test_dataset"
+      , "dataset_type": "spec"
+      , "dataroot_H": "/data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD2VAU/test/Out/"
+      , "dataroot_L": "/data2/letrunglinh/despecular/diff-train-style/SHDR-E2E-SHDNet/trainsets/SD2VAU/test/Inp/"
+      , "dataroot_M": null
+      , "H_size": 256
+    }
+  }
+
+  , "model_args": {
+    "base_dim": 48
+    , "depths": [2, 2, 4, 4]
+    , "stem_stride": 2
+    , "moe_experts": 4
+    , "shared_scan": true
+    , "use_mamba_stage3": true
+    , "use_mamba_decoder": false
+    , "prompt_dim": 128
+    , "lite_expansion": 1.0
+  }
+
+  , "train": {
+    "lr": 2e-4
+    , "ema_decay": 0.999
+    , "milestones": [20000, 40000, 70000]
+    , "gamma": 0.5
+    , "total_iters": 1000000
+    , "lam_mask": 1.0
+    , "lam_removal": 2.0
+    , "lam_bal": 0.01
+    , "lam_reg": 0.1
+    , "lam_prompt": 0.05
+    , "use_amp": true
+    , "amp_dtype": "bf16"
+    , "checkpoint_save": 5000
+    , "checkpoint_test": 5000
+    , "checkpoint_print": 100
+    , "eval_max": 1700
+    , "save_images": false
+    , "manual_seed": 42
+  }
+}
